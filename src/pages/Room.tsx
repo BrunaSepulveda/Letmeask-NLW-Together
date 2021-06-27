@@ -17,11 +17,18 @@ type RoomParams = {
 };
 
 export function Room() {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const [newQts, setNewQts] = useState("");
   const params = useParams<RoomParams>();
   const roomIdFirebase = params.id;
   const { questions, title } = useRoom(roomIdFirebase);
+
+  async function login() {
+    if (!user) {
+      await signInWithGoogle();
+    }
+    return;
+  }
 
   async function handleSendQuestion(event: FormEvent) {
     event.preventDefault();
@@ -96,7 +103,11 @@ export function Room() {
               </div>
             ) : (
               <span>
-                Para enviar uma pergunta, <button>faça seu login</button>.
+                Para enviar uma pergunta,
+                <button type="button" onClick={login}>
+                  faça seu login
+                </button>
+                .
               </span>
             )}
             <Button type="submit" disabled={!user}>
